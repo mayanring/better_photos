@@ -1,6 +1,20 @@
+<div class="container">
 
-<% @image_urls.each do |image_url| %>
-  <%= image_tag image_url %>
-<% end %>
+  <h1 class="recommendation-title">Parks and Recommendations</h1>
 
+  <ul class="recommendation-list">
+    <% @images.each do |image| %>
+      <li class="recommendation">
+        <%= link_to "//500px.com/photo/#{image[:id]}", target: '_blank' do %>
+          <%= image_tag image[:url], class: "recommendation-image" %>
+
+          <div class="recommendation-score">
+            <%= image[:score].round(3) %>
+          </div>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+</div>
 
