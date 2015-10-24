@@ -1,20 +1,39 @@
 <div class="container">
 
-  <h1 class="recommendation-title">Parks and Recommendations</h1>
+  <h1 class="recommendation__title">Parks and Recommendations</h1>
 
-  <ul class="recommendation-list">
-    <% @images.each do |image| %>
-      <li class="recommendation">
-        <%= link_to "//500px.com/photo/#{image[:id]}", target: '_blank' do %>
-          <%= image_tag image[:url], class: "recommendation-image" %>
+  <%= form_tag "/recommendations", method: 'get', enforce_utf8: false, class: "recommendation__form" do %>
+    <%= label_tag "user_id", "User ID", class: "recommendation__input-label" %>
+    <%= text_field_tag "user_id", nil, class: "recommendation__input" %>
+    <%= submit_tag "Engage!", name: nil, class: "recommendation__submit-btn" %>
+  <% end %>
 
-          <div class="recommendation-score">
-            <%= image[:score].round(3) %>
-          </div>
+  <% if @user_id %>
+    <p class="recommendation__description">Showing results for user <%= @user_id %>.</p>
+    <ul class="recommendation-list">
+      <% @images.each do |image| %>
+        <li class="recommendation">
+          <%= link_to "//500px.com/photo/#{image[:id]}", target: '_blank' do %>
+            <%= image_tag image[:url], class: "recommendation__image" %>
+
+            <div class="recommendation__score">
+              <%= image[:score].round(3) %>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+
+    <% if @skipped.present? %>
+      <h2 class="skipped">These images weren't retrieved from 500px for some reason:</h2>
+      <ul class="skipped-list">
+        <% @skipped.each do |skipped_photo_id| %>
+          <li class="skipped-item">
+            <%= link_to skipped_photo_id, "//500px.com/photo/#{skipped_photo_id}" %>
+          </li>
         <% end %>
-      </li>
+      </ul>
     <% end %>
-  </ul>
-
+  <% end %>
 </div>
 

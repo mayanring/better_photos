@@ -20,6 +20,8 @@ Run `bundle exec rake db:create`.
 
 By default, the app will expect your query engine to run on port 8000. If you want to override, specify an `ENV['PIO_ENGINE_URL']` somewhere in your config.
 
+Setup your consumer key and secrets (you'll have to make an app on 500px - see "applications" section under "settings" - or find someone with credentials). Stick this stuff in `config/secrets.yml` as `consumer_key` and `consumer_secret`
+
 Start Rails:
 
 `rails s`

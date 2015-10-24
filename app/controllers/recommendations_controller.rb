@@ -1,6 +1,7 @@
 class RecommendationsController < ApplicationController
   def index
-    user_id = photo_params
+    @skipped = []
+    user_id = photo_params[:user_id]
 
     client = PredictionIO::EngineClient.new(ENV['PIO_ENGINE_URL'] || "http://localhost:8000")
     recommended_photos = client.send_query(user: user_id)
@@ -25,16 +26,21 @@ class RecommendationsController < ApplicationController
     photos = json_response["photos"]
 
     @images = recommended_photos.map do |r|
-      { id: r.item, url: photos[r.item.to_s]['images'][0]['url'], score: r.score } if photos[r.item.to_s]
+      if photos[r.item.to_s]
+        { id: r.item, url: photos[r.item.to_s]['images'][0]['url'], score: r.score }
+      else
+        @skipped << r.item
+      end
     end
 
+    @user_id = user_id
     @images = @images.compact
   end
 
   private
 
   def photo_params
-    params.require(:user_id)
+    params.permit(:user_id)
   end
 end
 

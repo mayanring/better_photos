@@ -6,11 +6,19 @@
   position: relative;
   display: inline;
 
-  &-title {
+  &__title {
     margin-bottom: 1.5rem;
   }
 
-  &-score {
+  &__form {
+    margin-bottom: 3rem;
+  }
+
+  &__list {
+    margin-bottom: 2rem;
+  }
+
+  &__score {
     position: absolute;
     bottom: 8px;
     right: 12px;
@@ -19,4 +27,22 @@
     text-shadow: 0 0px 8px rgba(0,0,0,0.25);
     font-weight: bold;
   }
+
+  &__submit-btn {
+    margin: -4px 0 0 12px;
+  }
+
+  &__description {
+    color: #999;
+  }
+
+  &__input {
+    width: 400px !important;
+    display: inline-block;
+  }
+
+  &__input-label {
+    font-size: 0.75rem;
+  }
 }
+
