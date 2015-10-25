@@ -3,11 +3,26 @@ class RecommendationsController < ApplicationController
     @skipped = []
     @images = []
 
-    user_id = photo_params[:user_id]
+    username = photo_params[:username]
     num_recs = photo_params[:num]
 
+    if username
+      # fetch user from 500px
+      userResponse = JSON.parse(F00px.get("users/show?username=#{username}").body)["user"]
+      @user = {
+        id: userResponse["id"],
+        fullname: userResponse["fullname"],
+        avatar: userResponse["userpic_url"]
+      }
+    end
+
+    # get recommendations
     client = PredictionIO::EngineClient.new(ENV['PIO_ENGINE_URL'] || "http://localhost:8000")
-    recommended_photos = client.send_query(user: user_id, num: num_recs || 20)
+    if @user
+      recommended_photos = client.send_query(user: @user[:id], num: num_recs || 20)
+    else
+      recommended_photos = client.send_query(num: num_recs || 20)
+    end
     recommended_photos = recommended_photos["itemScores"].map { |r| OpenStruct.new(r) }
 
     # I expect recommended_photos to look like this:
@@ -21,14 +36,9 @@ class RecommendationsController < ApplicationController
     #   OpenStruct.new(item: photo_id, score: random.rand(1.5))
     # end
 
-    userResponse = JSON.parse(F00px.get("users/show?id=#{user_id}").body)["user"]
-    photoResponse = JSON.parse(F00px.get("photos?image_size=20&ids=#{recommended_photos.map{ |r| r.item }.join(',')}").body)
-
+    # fetch photos from 500px
+    photoResponse = JSON.parse(F00px.get("photos?image_size=31&ids=#{recommended_photos.map{ |r| r.item }.join(',')}").body)
     photos = photoResponse["photos"]
-    @user = {
-      fullname: userResponse["fullname"],
-      avatar: userResponse["userpic_url"]
-    }
 
     recommended_photos.each do |r|
       photo_id = r.item.to_s
@@ -47,13 +57,12 @@ class RecommendationsController < ApplicationController
       end
     end
 
-    @user_id = user_id
     @images = @images.compact
   end
 
   private
 
   def photo_params
-    params.permit(:user_id)
+    params.permit(:username)
   end
 end

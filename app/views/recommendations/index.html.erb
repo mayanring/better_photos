@@ -6,54 +6,56 @@
 
   <div class="header__right">
     <%= form_tag "/recommendations", method: 'get', enforce_utf8: false, class: "header__form" do %>
-      <%= text_field_tag "user_id", nil, class: "header__input", placeholder: "500px User ID" %>
+      <%= text_field_tag "username", nil, class: "header__input", placeholder: "500px Username" %>
       <%= submit_tag "Engage!", name: nil, class: "header__submit-btn" %>
     <% end %>
   </div>
 </div>
 
-<% if @user_id %>
-  <div class="recommendation__header">
+<div class="recommendation__header">
+  <% if @user %>
     <img class="recommendation__header__avatar" src="<%= @user[:avatar] %>" />
     <p class="recommendation__header__description">Recommended Photos for <%= @user[:fullname] %></p>
+  <% else %>
+    <p class="recommendation__header__description">Trending Photos</p>
+  <% end %>
+</div>
+
+<div class="container">
+  <div class="recommendation-list">
+    <% @images.each do |image| %>
+      <div class="recommendation">
+        <%= link_to "//500px.com/photo/#{image[:id]}", target: '_blank', class: 'recommendation__link' do %>
+          <%= image_tag image[:url], class: "recommendation__image" %>
+
+          <div class="recommendation__highest-rating">
+            <%= image[:highest_rating] %>
+          </div>
+
+          <div class="recommendation__votes">
+            <%= image[:votes_count] %>
+          </div>
+
+          <div class="recommendation__favorites">
+            <%= image[:favorites_count] %>
+          </div>
+
+          <div class="recommendation__score">
+            <%= image[:score].round(3) %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 
-  <div class="container">
-    <ul class="recommendation-list">
-      <% @images.each do |image| %>
-        <li class="recommendation">
-          <%= link_to "//500px.com/photo/#{image[:id]}", target: '_blank', class: 'recommendation__link' do %>
-            <%= image_tag image[:url], class: "recommendation__image" %>
-
-            <div class="recommendation__highest-rating">
-              <%= image[:highest_rating] %>
-            </div>
-
-            <div class="recommendation__votes">
-              <%= image[:votes_count] %>
-            </div>
-
-            <div class="recommendation__favorites">
-              <%= image[:favorites_count] %>
-            </div>
-
-            <div class="recommendation__score">
-              <%= image[:score].round(3) %>
-            </div>
-          <% end %>
+  <% if @skipped.present? %>
+    <h2 class="skipped">These images weren't retrieved from 500px for some reason:</h2>
+    <ul class="skipped-list">
+      <% @skipped.each do |skipped_photo_id| %>
+        <li class="skipped-item">
+          <%= link_to skipped_photo_id, "//500px.com/photo/#{skipped_photo_id}" %>
         </li>
       <% end %>
     </ul>
-
-    <% if @skipped.present? %>
-      <h2 class="skipped">These images weren't retrieved from 500px for some reason:</h2>
-      <ul class="skipped-list">
-        <% @skipped.each do |skipped_photo_id| %>
-          <li class="skipped-item">
-            <%= link_to skipped_photo_id, "//500px.com/photo/#{skipped_photo_id}" %>
-          </li>
-        <% end %>
-      </ul>
-    <% end %>
-  </div>
-<% end %>
+  <% end %>
+</div>

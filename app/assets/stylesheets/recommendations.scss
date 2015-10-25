@@ -36,7 +36,7 @@
   }
 
   &__form {
-    margin-top: 6px;
+    margin-top: 10px;
   }
 
   &__submit-btn {
@@ -48,8 +48,10 @@
   }
 
   &__input {
-    width: 400px !important;
+    width: 200px !important;
+    height: 30px !important;
     display: inline-block;
+    color: #525558;
   }
 
   &__input-label {
