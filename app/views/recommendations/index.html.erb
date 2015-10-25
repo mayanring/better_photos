@@ -13,8 +13,20 @@
     <ul class="recommendation-list">
       <% @images.each do |image| %>
         <li class="recommendation">
-          <%= link_to "//500px.com/photo/#{image[:id]}", target: '_blank' do %>
+          <%= link_to "//500px.com/photo/#{image[:id]}", target: '_blank', class: 'recommendation__link' do %>
             <%= image_tag image[:url], class: "recommendation__image" %>
+
+            <div class="recommendation__highest-rating">
+              <%= image[:highest_rating] %>
+            </div>
+
+            <div class="recommendation__votes">
+              <%= image[:votes_count] %>
+            </div>
+
+            <div class="recommendation__favorites">
+              <%= image[:favorites_count] %>
+            </div>
 
             <div class="recommendation__score">
               <%= image[:score].round(3) %>

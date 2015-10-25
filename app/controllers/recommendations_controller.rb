@@ -9,8 +9,6 @@ class RecommendationsController < ApplicationController
     recommended_photos = client.send_query(user: user_id)
     recommended_photos = recommended_photos["itemScores"].map { |r| OpenStruct.new(r) }
 
-    # photo_ids = recommended_photos["itemScores"].map { |item| item["item"] }
-
     # I expect recommended_photos to look like this:
     # [{ item: '123456', score: '0.2313545' }, {..}]
 
@@ -28,8 +26,17 @@ class RecommendationsController < ApplicationController
     photos = json_response["photos"]
 
     recommended_photos.each do |r|
-      if photos[r.item.to_s]
-        @images << { id: r.item, url: photos[r.item.to_s]['images'][0]['url'], score: r.score }
+      photo_id = r.item.to_s
+
+      if photos[photo_id]
+        @images << {
+            id: r.item,
+            url: photos[photo_id]['images'][0]['url'],
+            score: r.score,
+            favorites_count: photos[photo_id]['favorites_count'],
+            votes_count: photos[photo_id]['votes_count'],
+            highest_rating: photos[photo_id]['highest_rating']
+          }
       else
         @skipped << r.item
       end
