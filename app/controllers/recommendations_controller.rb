@@ -20,10 +20,15 @@ class RecommendationsController < ApplicationController
     #   OpenStruct.new(item: photo_id, score: random.rand(1.5))
     # end
 
-    response = F00px.get("photos?image_size=20&ids=#{recommended_photos.map{ |r| r.item }.join(',')}")
-    json_response = JSON.parse(response.body)
+    userResponse = JSON.parse(F00px.get("users/show?id=#{user_id}").body)["user"]
+    photoResponse = JSON.parse(F00px.get("photos?image_size=20&ids=#{recommended_photos.map{ |r| r.item }.join(',')}").body)
 
-    photos = json_response["photos"]
+    photos = photoResponse["photos"]
+
+    @user = {
+      fullname: userResponse["fullname"],
+      avatar: userResponse["userpic_url"]
+    }
 
     recommended_photos.each do |r|
       photo_id = r.item.to_s
@@ -52,5 +57,3 @@ class RecommendationsController < ApplicationController
     params.permit(:user_id)
   end
 end
-
-

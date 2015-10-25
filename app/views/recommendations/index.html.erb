@@ -1,15 +1,24 @@
-<div class="container">
+<div class="header">
+  <div class="header__left">
+    <%= image_tag "wordmark.png", class: "header__logo" %>
+    <h1 class="header__title">Parks and Recommendations</h1>
+  </div>
 
-  <h1 class="recommendation__title">Parks and Recommendations</h1>
+  <div class="header__right">
+    <%= form_tag "/recommendations", method: 'get', enforce_utf8: false, class: "header__form" do %>
+      <%= text_field_tag "user_id", nil, class: "header__input", placeholder: "500px User ID" %>
+      <%= submit_tag "Engage!", name: nil, class: "header__submit-btn" %>
+    <% end %>
+  </div>
+</div>
 
-  <%= form_tag "/recommendations", method: 'get', enforce_utf8: false, class: "recommendation__form" do %>
-    <%= label_tag "user_id", "User ID", class: "recommendation__input-label" %>
-    <%= text_field_tag "user_id", nil, class: "recommendation__input" %>
-    <%= submit_tag "Engage!", name: nil, class: "recommendation__submit-btn" %>
-  <% end %>
+<% if @user_id %>
+  <div class="recommendation__header">
+    <img class="recommendation__header__avatar" src="<%= @user[:avatar] %>" />
+    <p class="recommendation__header__description">Recommended Photos for <%= @user[:fullname] %></p>
+  </div>
 
-  <% if @user_id %>
-    <p class="recommendation__description">Showing results for user <%= @user_id %>.</p>
+  <div class="container">
     <ul class="recommendation-list">
       <% @images.each do |image| %>
         <li class="recommendation">
@@ -46,6 +55,5 @@
         <% end %>
       </ul>
     <% end %>
-  <% end %>
-</div>
-
+  </div>
+<% end %>
