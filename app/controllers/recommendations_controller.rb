@@ -4,9 +4,10 @@ class RecommendationsController < ApplicationController
     @images = []
 
     user_id = photo_params[:user_id]
+    num_recs = photo_params[:num]
 
     client = PredictionIO::EngineClient.new(ENV['PIO_ENGINE_URL'] || "http://localhost:8000")
-    recommended_photos = client.send_query(user: user_id)
+    recommended_photos = client.send_query(user: user_id, num: num_recs || 20)
     recommended_photos = recommended_photos["itemScores"].map { |r| OpenStruct.new(r) }
 
     # I expect recommended_photos to look like this:
@@ -24,7 +25,6 @@ class RecommendationsController < ApplicationController
     photoResponse = JSON.parse(F00px.get("photos?image_size=20&ids=#{recommended_photos.map{ |r| r.item }.join(',')}").body)
 
     photos = photoResponse["photos"]
-
     @user = {
       fullname: userResponse["fullname"],
       avatar: userResponse["userpic_url"]
